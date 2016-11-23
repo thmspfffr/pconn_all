@@ -124,13 +124,14 @@ v  = 3;
 
 for isubj = SUBJLIST
   for m = 1 : 3
+    im = find(ord(isubj,:)==m);
     for iblock = 1 : 2
       
-        load(sprintf('~/pconn/proc/preproc/pconn_rejected_comps_s%d_m%d_b%d_f1_v%d.mat',isubj,m,iblock,v));
+        load(sprintf('~/pconn/proc/preproc/pconn_rejected_comps_s%d_m%d_b%d_f1_v%d.mat',isubj,im,iblock,v));
         
         s(iblock,m,isubj) = sum(rej_comp);
         
-      	load(sprintf('~/pconn_cnt/proc/preproc/pconn_cnt_rejected_comps_s%d_m%d_b%d_f1_v%d.mat',isubj,m,iblock,1));
+      	load(sprintf('~/pconn_cnt/proc/preproc/pconn_cnt_rejected_comps_s%d_m%d_b%d_f1_v%d.mat',isubj,im,iblock,1));
 
         x(iblock,m,isubj) = sum(rej_comp);
   
@@ -149,7 +150,7 @@ nanmean(x(:))
 
 %% 
 clear all_sync
-ifoi = 3;
+ifoi = 2;
 
 SUBJLIST  = [4 5 6 7 8 9 10 11 12 13 15 16  19 20 21 22 23 24];
 outdir   = '/home/tpfeffer/pconn_cnt/proc/dfa/';
@@ -187,6 +188,6 @@ pars.linewidth = 9;
 pars.scale = [min(d) max(d)];
 pars.cbar = 0;
 pars.markersize = 0;
-% d = d.*t;
+d = d.*t;
 
 showfield_colormap(d,sa.locs_2D,pars)

@@ -1,3 +1,4 @@
+
 %% COMPUTE EXCITATION/INHIBITION BALANCE ACROSS SENSOR SPACE
 % pconn_sens_sync
 
@@ -33,7 +34,7 @@ clear res_std res_mean res_dfa cnt_std cnt_mean cnt_dfa
 
 ord       = pconn_randomization;
 
-ifoi = 3;
+ifoi = 4;
 
 for m = 1 : 3
   for isubj = SUBJLIST
@@ -60,54 +61,48 @@ for m = 1 : 3
   end
 end
 
-res_std  = res_std(:,:,SUBJLIST);
-res_mean = res_mean(:,:,SUBJLIST);
-res_dfa  = res_dfa(:,:,SUBJLIST);
-res_med  = res_med(:,:,SUBJLIST);
+res_std  = squeeze(nanmean(res_std(:,:,SUBJLIST),1))';
+res_mean = squeeze(nanmean(res_mean(:,:,SUBJLIST),1))';
+res_dfa  = squeeze(nanmean(res_dfa(:,:,SUBJLIST),1))';
+res_med  = squeeze(nanmean(res_med(:,:,SUBJLIST),1))';
 
-cnt_std  = cnt_std(:,:,SUBJLIST);
-cnt_mean = cnt_mean(:,:,SUBJLIST);
-cnt_dfa  = cnt_dfa(:,:,SUBJLIST);
-cnt_med  = cnt_med(:,:,SUBJLIST);
+cnt_std  = squeeze(nanmean(cnt_std(:,:,SUBJLIST),1))';
+cnt_mean = squeeze(nanmean(cnt_mean(:,:,SUBJLIST),1))';
+cnt_dfa  = squeeze(nanmean(cnt_dfa(:,:,SUBJLIST),1))';
+cnt_med  = squeeze(nanmean(cnt_med(:,:,SUBJLIST),1))';
 
 
 
 %%
 
+str = 'std';
 
-par_std  = [squeeze(nanmean(all_sync_std(:,1,:),1)) squeeze(nanmean(all_sync_std(:,2,:),1)) squeeze(nanmean(all_sync_std(:,3,:),1))];
-par_mean = [squeeze(nanmean(all_sync_mean(:,1,:),1)) squeeze(nanmean(all_sync_mean(:,2,:),1)) squeeze(nanmean(all_sync_mean(:,3,:),1))];
-par_dfa  = [squeeze(nanmean(all_sync_dfa(:,1,:),1)) squeeze(nanmean(all_sync_dfa(:,2,:),1)) squeeze(nanmean(all_sync_dfa(:,3,:),1))];
+switch str
+  case 'std'
+    par_res  = res_std;
+    par_cnt  = cnt_std;
+  case 'mean'
+    par_res  = res_mean;
+    par_cnt  = cnt_mean;
+  case 'dfa'
+    par_res  = res_dfa;
+    par_cnt  = cnt_dfa;
+  case 'med'
+    
+end
+    
 
 % STD OF R
-[~,p_std(1)]=ttest(par_std(:,2),par_std(:,1));
-[~,p_std(2)]=ttest(par_std(:,3),par_std(:,1));
-[~,p_std(3)]=ttest(par_std(:,3),par_std(:,2));
-
-% MEAN OF R
-[~,p_mean(1)]=ttest(par_mean(:,2),par_mean(:,1));
-[~,p_mean(2)]=ttest(par_mean(:,3),par_mean(:,1));
-[~,p_mean(3)]=ttest(par_mean(:,3),par_mean(:,2));
-
-% DFA OF R
-[~,p_dfa(1)]=ttest(par_dfa(:,2),par_dfa(:,1));
-[~,p_dfa(2)]=ttest(par_dfa(:,3),par_dfa(:,1));
-[~,p_dfa(3)]=ttest(par_dfa(:,3),par_dfa(:,2));
-
+[~,p_std(1)]=ttest(par_res(:,2),par_res(:,1));
+[~,p_std(2)]=ttest(par_res(:,3),par_res(:,1));
+[~,p_std(3)]=ttest(par_res(:,3),par_res(:,2));
 
 % BAR PLOTS
 
-m_std  = nanmean(par_std);
-m_mean = nanmean(par_mean);
-m_dfa  = nanmean(par_dfa);
+m_std    = nanmean(par_res);
+sem_std  = nanstd(par_res)/sqrt(length(par_res));
 
-sem_std  = nanstd(par_std)/sqrt(length(par_std));
-sem_mean = nanstd(par_mean)/sqrt(length(par_std));
-sem_dfa  = nanstd(par_dfa)/sqrt(length(par_std));
-
-%
-
-figure; set(gcf,'color','white'); hold on; title(sprintf('STD(SYNC): p1 = %.3f, p2 = %.3f, p3 = %.3f',p_std(1),p_std(2),p_std(3)))
+figure; set(gcf,'color','white'); hold on; title(sprintf('STD(SYNC) RST: p1 = %.3f, p2 = %.3f, p3 = %.3f',p_std(1),p_std(2),p_std(3)))
 
 lim = [min(m_std-sem_std)-0.1*min(m_std-sem_std) max(m_std+sem_std)+0.1*max(m_std+sem_std)];
 
@@ -117,31 +112,29 @@ line([1.5 1.5],[m_std(2)-sem_std(2) m_std(2)+sem_std(2)],'linewidth',5)
 line([2 2],[m_std(3)-sem_std(3) m_std(3)+sem_std(3)],'linewidth',5)
 set(gca,'TickDir','out')
 
-print(gcf,'-depsc2',sprintf('~/pconn/proc/plots/pconn_sens_sync_std_f%d_v%d.eps',ifoi,v))
+print(gcf,'-depsc2',sprintf('~/pconn/proc/plots/pconn_sens_sync_rst_%s_f%d_v%d.eps',str,ifoi,v))
 
-figure; set(gcf,'color','white'); hold on; title(sprintf('MEAN(SYNC): p1 = %.3f, p2 = %.3f, p3 = %.3f',p_mean(1),p_mean(2),p_mean(3)))
+% STD OF R
+[~,p_std(1)]=ttest(par_cnt(:,2),par_cnt(:,1));
+[~,p_std(2)]=ttest(par_cnt(:,3),par_cnt(:,1));
+[~,p_std(3)]=ttest(par_cnt(:,3),par_cnt(:,2));
 
-lim = [min(m_mean-sem_mean)-0.1*min(m_mean-sem_mean) max(m_mean+sem_mean)+0.1*max(m_mean+sem_mean)];
+% BAR PLOTS
 
-bar([1 1.5 2],m_mean,0.4); axis([0.5 2.5 lim]);
-line([1 1],[m_mean(1)-sem_mean(1) m_mean(1)+sem_mean(1)],'linewidth',5)
-line([1.5 1.5],[m_mean(2)-sem_mean(2) m_mean(2)+sem_mean(2)],'linewidth',5)
-line([2 2],[m_mean(3)-sem_mean(3) m_mean(3)+sem_mean(3)],'linewidth',5)
+m_std    = nanmean(par_cnt);
+sem_std  = nanstd(par_cnt)/sqrt(length(par_cnt));
+
+figure; set(gcf,'color','white'); hold on; title(sprintf('STD(SYNC) TSK: p1 = %.3f, p2 = %.3f, p3 = %.3f',p_std(1),p_std(2),p_std(3)))
+
+lim = [min(m_std-sem_std)-0.1*min(m_std-sem_std) max(m_std+sem_std)+0.1*max(m_std+sem_std)];
+
+bar([1 1.5 2],m_std,0.4); axis([0.5 2.5 lim]);
+line([1 1],[m_std(1)-sem_std(1) m_std(1)+sem_std(1)],'linewidth',5)
+line([1.5 1.5],[m_std(2)-sem_std(2) m_std(2)+sem_std(2)],'linewidth',5)
+line([2 2],[m_std(3)-sem_std(3) m_std(3)+sem_std(3)],'linewidth',5)
 set(gca,'TickDir','out')
 
-print(gcf,'-depsc2',sprintf('~/pconn/proc/plots/pconn_sens_sync_mean_f%d_v%d.eps',ifoi,v))
+print(gcf,'-depsc2',sprintf('~/pconn/proc/plots/pconn_sens_sync_tsk_%s_f%d_v%d.eps',str,ifoi,v))
 
-figure; set(gcf,'color','white'); hold on; title(sprintf('DFA(SYNC): p1 = %.3f, p2 = %.3f, p3 = %.3f',p_dfa(1),p_dfa(2),p_dfa(3)))
-
-lim = [min(m_dfa-sem_dfa)-0.1*min(m_dfa-sem_dfa) max(m_dfa+sem_dfa)+0.1*max(m_dfa+sem_dfa)];
-
-bar([1 1.5 2],m_dfa,0.4); axis([0.5 2.5 lim]);
-line([1 1],[m_dfa(1)-sem_dfa(1) m_dfa(1)+sem_dfa(1)],'linewidth',5)
-line([1.5 1.5],[m_dfa(2)-sem_dfa(2) m_dfa(2)+sem_dfa(2)],'linewidth',5)
-line([2 2],[m_dfa(3)-sem_dfa(3) m_dfa(3)+sem_dfa(3)],'linewidth',5)
-set(gca,'TickDir','out')
-
-print(gcf,'-depsc2',sprintf('~/pconn/proc/plots/pconn_sens_sync_dfa_f%d_v%d.eps',ifoi,v))
-
-
-
+[~,p]=ttest(nanmean(par_cnt,2),nanmean(par_res,2))
+%%

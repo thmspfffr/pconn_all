@@ -1,24 +1,63 @@
 %% COMPUTE WHOLE BRAIN DFA IN SOURCE SPACE
-% pconn_src_dfa
+% all_src_dfa
 
 clear all
 
 % --------------------------------------------------------
 % VERSION 1
 % --------------------------------------------------------
-v         = 16;
-v_rawdata = 6;
-fsample   = 400;
-SUBJLIST  = [4 5 6 7 8 9 10 11 12 13 15 16 19 20 21 22 23 24];
-foi       = [2 4; 4 8; 8 12; 12 36];
-fit_interv 	= [1 96];
-calc_interv = [0.5 100];
-gridsize  = 'cortex';
-filt      = 'eloreta';
+v           = 1;
+fsample     = 400;
+SUBJLIST    = [4 5 6 7 8 9 10 11 12 13 15 16 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33];
+foi         = [2 4; 4 8; 8 12; 12 36; 60 120];
+fit_interv  = [2 50];
+calc_interv = [1.5 70];
+gridsize    = 'cortex';
+filt        = 'eloreta';
 overlap     = 0.3;
+para.detrend = 1;
 dfa_overlap = 0.5;
-v_pup = 10;
+v_pup = 1;
 % --------------------------------------------------------
+% VERSION 7
+% --------------------------------------------------------
+% v           = 7;
+% fsample     = 400;
+% SUBJLIST    = [4 5 6 7 8 9 10 11 12 13 15 16 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33];
+% foi         = [2 4; 4 8; 8 12; 12 36];
+% fit_interv  = [2 30];
+% calc_interv = [1.5 50];
+% gridsize    = 'cortex';
+% filt        = 'eloreta';
+% dfa_overlap = 0.5;
+% filt_ord    = 2;
+% v_pup       = 1;
+% para.detrend = 1;
+% --------------------------------------------------------
+% VERSION 11
+% --------------------------------------------------------
+% v           = 11;
+% fsample     = 400;
+% SUBJLIST    = [4 5 6 7 8 9 10 11 12 13 15 16 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33];
+% foi         = [2 4; 4 8; 8 12; 12 36];
+% fit_interv  = [2 50];
+% calc_interv = [1.5 70];
+% gridsize    = 'cortex';
+% filt        = 'eloreta';
+% overlap     = 0.3;
+% para.detrend = 0;
+% dfa_overlap = 0.5;
+% v_pup = 1;
+% --------------------------------------------------------
+
+% para.detrend = 1
+% SUBJECT 20, m == 2, iblock == 1: no first trigger, perhaps mismatch
+% between time courses. Consider excluding 1st block.
+
+% SUBJECT 10, m == 3, iblock == 1: strange trigger data, excluded for now
+
+% SUBJECT 32, m ==3, iblock == 1: No pupil data
+
 
 restoredefaultpath
 
@@ -38,7 +77,7 @@ freq = 1;
 run ~/Documents/MATLAB/toolboxes/NBT-NBTv0.5.3-alpha/installNBT.m
 %%
 
-for ifoi = 3 : 3%length(foi)
+for ifoi = 1 : length(foi)
   for m = 1 : 3
     for isubj = SUBJLIST
       
@@ -68,6 +107,7 @@ for ifoi = 3 : 3%length(foi)
         num_blocks(isubj,m) = 2;
         bl = 1;
       end
+      
       disp(sprintf('Processing s%d m%d f%d ...', isubj,m,ifoi))
       
       
@@ -80,41 +120,63 @@ for ifoi = 3 : 3%length(foi)
         % -----------------------------------------------------------------
         % INTERPOLATE BLINKS
         % -----------------------------------------------------------------
-        x = abs(diff(zscore(pup.dil)));
+        x = abs(diff(zscore(pup)));
         [~,idx]=findpeaks(double(x>0.20),'MinPeakDistance',200);
         
         for iidx = 1 : size(idx,1)
-          if idx(iidx)-50>0 && idx(iidx)+600<length(pup.dil)
-            pup.dil(idx(iidx)-50:idx(iidx)+600)=NaN;
+          if idx(iidx)-50>0 && idx(iidx)+600<length(pup)
+            pup(idx(iidx)-50:idx(iidx)+600)=NaN;
           elseif idx(iidx)-50<0
-            pup.dil(2:idx(iidx)+600)=NaN;
-          elseif idx(iidx)+600>length(pup.dil)
-            pup.dil(idx(iidx)-50:end)=NaN;
+            pup(2:idx(iidx)+600)=NaN;
+          elseif idx(iidx)+600>length(pup)
+            pup(idx(iidx)-50:end)=NaN;
           end
         end
         
         clear idx x
         
-        pup.dil = fixgaps(pup.dil,'pchip');
+        pup = fixgaps(pup,'pchip');
         
-        if isnan(pup.dil(1))
-          tt = find(~isnan(pup.dil),1,'first');
-          pup.dil(1) = pup.dil(tt);
-        elseif isnan(pup.dil(end))
-          tt = find(~isnan(pup.dil),1,'last');
-          pup.dil(end) = pup.dil(tt);
+        if isnan(pup(1))
+          tt = find(~isnan(pup),1,'first');
+          pup(1) = pup(tt);
+        elseif isnan(pup(end))
+          tt = find(~isnan(pup),1,'last');
+          pup(end) = pup(tt);
         end
-        pup.dil = fixgaps(pup.dil,'pchip');
+        pup = fixgaps(pup,'pchip');
         % -----------------------------------------------------------------
         clear tt
-        
-        % ------------------------------------------
+        figure; set (gcf,'color','white')
+subplot(1,2,1)
+        plot(pup); title(sprintf('S%dM%dB%d',isubj,m,iblock))
+        tp_editplots
+%         print(gcf,'-djpeg100',sprintf('~/pconn_all/plots/all_src_pupil_timecourse_procproc_s%d_m%d_b%d_v%d.jpg',isubj,m,iblock,v))
+                 
+         % ------------------------------------------
         % COMPUTE DFA IN SOURCE SPACE
         % ------------------------------------------
         
         clear L grid
         % load cross spectrum
-        load(['~/pconn/proc/src/' sprintf('pconn_sens_cs_s%d_m%d_b%d_f%d_v%d.mat',isubj,m,iblock,freq,1)]);
+        load(['~/pconn/proc/src/' sprintf('pconn_sens_cs_s%d_m%d_b%d_f1_v%d.mat',isubj,m,iblock,3)]);
+        
+        if para.detrend 
+          flp     = 0.01;           % lowpass frequency of filter
+          fhi     = 5;           % highpass
+          delt  	= 1/400;            % sampling interval
+          k      	= 2;                  % 2nd order butterworth filter
+          fnq    	= 1/(2*delt);       % Nyquist frequency
+          Wn    	= [flp/fnq fhi/fnq]; % butterworth bandpass non-dimensional frequency
+          [b,a]   = butter(k,Wn);  
+          pup = filtfilt(b,a,pup);
+          subplot(1,2,2)
+          plot(pup); title(sprintf('S%dM%dB%d',isubj,m,iblock));tp_editplots
+   
+        end
+        
+      	print(gcf,'-djpeg100',sprintf('~/pconn_all/plots/all_src_pupil_timecourse_procproc_filt_s%d_m%d_b%d_v%d.jpg',isubj,m,iblock,v))
+
         
         if strcmp(filt,'lcmv')
           if strcmp(gridsize,'xcoarse')
@@ -167,7 +229,7 @@ for ifoi = 3 : 3%length(foi)
         for itime = 1 : nseg
           
           timerange        = [(itime-1)*segshift+1 (itime-1)*segshift+seglen];
-          pup_dat          = pup.dil(timerange(1):timerange(2));
+          pup_dat          = pup(timerange(1):timerange(2));
           tmp_dat          = abs(hilbert(ampenv(timerange(1):timerange(2),:)));
           
           pha              = angle(hilbert(ampenv(timerange(1):timerange(2),:)));
@@ -185,6 +247,7 @@ for ifoi = 3 : 3%length(foi)
           par.meg_dfa(itime,:)  = tmp.MarkerValues;
           par.meg_amp(itime,:)  = nanmean(tmp_dat,1);
           par.pup_amp(itime,:)  = nanmean(pup_dat);
+          par.pup_diff(itime,:) = diff(pup_dat);
           par.pup_var(itime,:)  = var(pup_dat);
           par.meg_var(itime,:)  = nanvar(tmp_dat);
           par.meg_cvar(itime,:) = nanstd(tmp_dat)./nanmean(tmp_dat);

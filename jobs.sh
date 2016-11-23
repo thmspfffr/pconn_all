@@ -18,7 +18,7 @@ chmod g=wx $PBS_JOBNAME
 # FILE TO EXECUTE
 
 
-# matlab -nodisplay -nodesktop -r "pconn_sens_pup_dfa($RANDOM); exit"  1> jobs/$PBS_JOBID.out 2> ~/jobs/$PBS_JOBID.err
+# matlab -nodisplay -nodesktop -r "pconn_sens_pup_dfa($RANDOM); exit"  1> ~/jobs/$PBS_JOBID.out 2> ~/jobs/$PBS_JOBID.err
 
-matlab -nodisplay -nodesktop -r "all_src_pup; exit"  1> jobs/$PBS_JOBID.out 2> ~/jobs/$PBS_JOBID.err
+matlab -nodisplay -nodesktop -r "all_src_clusterstat_power; exit"  1> ~/jobs/$PBS_JOBID.out 2> ~/jobs/$PBS_JOBID.err
 

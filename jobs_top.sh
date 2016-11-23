@@ -2,7 +2,7 @@
 
 # Submits n jobs to the torque queing system
 
-for i in {1..14}
+for i in {1..70}
 do
   echo 'Start Job rev' $i
   qsub jobs.sh
