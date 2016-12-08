@@ -6,7 +6,7 @@
 
 #PBS -q batch
 #PBS -l walltime=700:00:00
-#PBS -l nodes=1:ppn=1
+#PBS -l nodes=1:ppn=2
 #PBS -l mem=10gb
 
 
@@ -20,5 +20,7 @@ chmod g=wx $PBS_JOBNAME
 
 # matlab -nodisplay -nodesktop -r "pconn_sens_pup_dfa($RANDOM); exit"  1> ~/jobs/$PBS_JOBID.out 2> ~/jobs/$PBS_JOBID.err
 
-matlab -nodisplay -nodesktop -r "all_src_clusterstat_power; exit"  1> ~/jobs/$PBS_JOBID.out 2> ~/jobs/$PBS_JOBID.err
+matlab -nodisplay -nodesktop -r "all_behav_src_stats; exit"  1> ~/jobs/$PBS_JOBID.out 2> ~/jobs/$PBS_JOBID.err
+
+
 

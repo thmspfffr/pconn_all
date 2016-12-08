@@ -3,35 +3,63 @@
 % Performs cluster based permutation test on source space data
 
 
-clear all
+clear 
+rng('shuffle','twister')
 
 maxfoi = 4;
 % v = 1: cortex, eloreta, v = 2: cortex, lcmv, v = 3: coarse, eloreta
 
-for v = [2]
+for v = [2 8 22]
   
   
-  if v == 1
+  if v == 2
     % --------------------------------------------------------
     % VERSION 1
     % --------------------------------------------------------
-    v_out     = 1;
+    v_out     = v;
     v_res     = v_out;
     v_cnt     = v_out;
-    SUBJLIST  = [4 5 6 7 8 9 10 11 12 13 15 16 17 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
+    SUBJLIST  = [4 5 6 7 8 9 10 11 12 13 15 16 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
     gridsize = 'cortex';
     para.clusteralpha = 0.025;
+    para.method       = 'dependentT';
+     para.minneigh     = 3;
+     para.clusteralpha = 0.025;
+     para.alpha        = 0.025;
+     para.nperm        = 10000;
     % --------------------------------------------------------
-  elseif v == 2
+  elseif v == 8
     % --------------------------------------------------------
     % VERSION 2
     % --------------------------------------------------------
-    v_out     = 2;
+    v_out     = v;
     v_res     = v_out;
     v_cnt     = v_out;
-    SUBJLIST  = [4 5 6 7 8 9 10 11 12 13 15 16 17 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
+    SUBJLIST  = [4 5 6 7 8 9 10 11 12 13 15 16 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
     gridsize = 'cortex';
     para.clusteralpha = 0.025;
+    para.method       = 'dependentT';
+     para.minneigh     = 3;
+     para.clusteralpha = 0.025;
+     para.alpha        = 0.025;
+     para.nperm        = 10000;
+    % --------------------------------------------------------
+      % --------------------------------------------------------
+  elseif v == 22
+    % --------------------------------------------------------
+    % VERSION 2
+    % --------------------------------------------------------
+    v_out     = v;
+    v_res     = 2;
+    v_cnt     = 2;
+    v = 2;
+    SUBJLIST  = [4 5 6 7 8 9 10 11 12 13 15 16 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
+    gridsize = 'cortex';
+    para.method       = 'dependentT';
+     para.minneigh     = 2;
+     para.clusteralpha = 0.05;
+     para.alpha        = 0.025;
+     para.nperm        = 10000;
     % --------------------------------------------------------
   end
   
@@ -39,7 +67,7 @@ for v = [2]
   outdir    = '/home/tpfeffer/pconn_all/proc/';
   plotdir   = '/home/tpfeffer/pconn_cnt/proc/plots/';
   
-  allstr = {'dfa';'amp';'cvar';'var'};
+allstr       = {'dfa';'amp';'cvar';'pow'};
   
   for istr = 1 : length(allstr)
     
@@ -86,11 +114,7 @@ for v = [2]
     
      n =  get_neighbours(grid);
      para.neigh        = n;
-     para.method       = 'dependentT';
-     para.minneigh     = 3;
-     para.clusteralpha = 0.05;
-     para.alpha        = 0.025;
-     para.nperm        = 10000;
+     
     
     %% PLOT DFA
     
@@ -106,17 +130,20 @@ for v = [2]
           load(sprintf(['~/pconn_cnt/proc/dfa/pconn_cnt_src_dfa_s%d_m%d_f%d_v%d.mat'],isubj,im,ifoi,v));
           
           dfa_all_cnt(:,m,isubj,ifoi)  = nanmean(par.dfa,2);
-          var_all_cnt(:,m,isubj,ifoi)  = nanmean(par.var,2);
           cvar_all_cnt(:,m,isubj,ifoi) = nanmean(par.cvar,2); 
           amp_all_cnt(:,m,isubj,ifoi)  = nanmean(par.amp,2); clear par
           %
           load(sprintf(['~/pconn/proc/dfa/pconn_src_dfa_s%d_m%d_f%d_v%d.mat'],isubj,im,ifoi,v));
           %
           dfa_all_res(:,m,isubj,ifoi)  = nanmean(par.dfa,2);
-          var_all_res(:,m,isubj,ifoi)  = nanmean(par.var,2);
           cvar_all_res(:,m,isubj,ifoi) = nanmean(par.cvar,2); 
           amp_all_res(:,m,isubj,ifoi)  = nanmean(par.amp,2); clear par
           
+          load(sprintf(['~/pconn_cnt/proc/src/pconn_cnt_src_pow_s%d_m%d_f%d_v%d.mat'],isubj,im,ifoi,1));
+          pow_all_cnt(:,m,isubj,ifoi)  = nanmean(par.pow,2); clear par
+
+          load(sprintf(['~/pconn/proc/src/pconn_src_pow_s%d_m%d_f%d_v%d.mat'],isubj,im,ifoi,1));
+          pow_all_res(:,m,isubj,ifoi)  = nanmean(par.pow,2); clear par
 
           
         end
@@ -124,14 +151,14 @@ for v = [2]
     end
     
     dfa_all_res  = dfa_all_res(:,:,SUBJLIST,:);
-    var_all_res  = var_all_res(:,:,SUBJLIST,:);
     cvar_all_res = cvar_all_res(:,:,SUBJLIST,:);
     amp_all_res  = amp_all_res(:,:,SUBJLIST,:);
+    pow_all_res  = pow_all_res(:,:,SUBJLIST,:);
 
     dfa_all_cnt  = dfa_all_cnt(:,:,SUBJLIST,:);
-    var_all_cnt  = var_all_cnt(:,:,SUBJLIST,:);
     cvar_all_cnt = cvar_all_cnt(:,:,SUBJLIST,:);
     amp_all_cnt  = amp_all_cnt(:,:,SUBJLIST,:);
+    pow_all_cnt  = pow_all_cnt(:,:,SUBJLIST,:);
  
     %%
     for ifoi = 1 : maxfoi
@@ -143,24 +170,22 @@ for v = [2]
       if strcmp(str,'dfa')
         par_all_res = dfa_all_res(:,:,:,ifoi);
         par_all_cnt = dfa_all_cnt(:,:,:,ifoi);
-      elseif strcmp(str,'var')
-        par_all_res = var_all_res(:,:,:,ifoi);
-        par_all_cnt = var_all_cnt(:,:,:,ifoi);
-      elseif strcmp(str,'cvar')
-        par_all_res = cvar_all_res(:,:,:,ifoi);
-        par_all_cnt = cvar_all_cnt(:,:,:,ifoi);
       elseif strcmp(str,'amp')
         par_all_res = amp_all_res(:,:,:,ifoi);
         par_all_cnt = amp_all_cnt(:,:,:,ifoi);
+      elseif strcmp(str,'cvar')
+        par_all_res = cvar_all_res(:,:,:,ifoi);
+        par_all_cnt = cvar_all_cnt(:,:,:,ifoi);
+      elseif strcmp(str,'pow')
+        par_all_res = pow_all_res(:,:,:,ifoi);
+        par_all_cnt = pow_all_cnt(:,:,:,ifoi);
       end
-      
       
       for icontr = 1 : 3
         
         z(:,:,1)=par_all_res(:,contrasts(icontr,1),:);
         z(:,:,2)=par_all_res(:,contrasts(icontr,2),:);
         
-%         stats = clust_perm(z,para);
         stats = tp_clusterperm(z,para);
 
         save(sprintf('~/pconn_all/proc/all_src_clusterstat_rst_%s_c%d_f%d_v%d.mat',str,icontr,ifoi,v_out),'stats');
