@@ -4,8 +4,7 @@
 
 for i in {1..50}
 do
-  echo 'Start Job rev' $i
-  qsub jobs.sh
-  sleep 15
+  let var1=40*$i;
+  echo 'Start Job ' $i 'wait for: ' $var1 's'
+  qsub -v var="$var1" jobs.sh
 done
-

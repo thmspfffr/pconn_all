@@ -261,9 +261,17 @@ if isempty(find(stats_t2.h))
 else
   t_m2 = stats_t2.clustloc{find(stats_t2.h)};
 end
-%% %% PLOT POWER
+
+% REST VS TASK
+stats_r_vs_t = tp_clustperm_1D(squeeze(par_res(1:maxf,:,1)),squeeze(par_cnt(1:maxf,:,1)),para);
+if isempty(find(stats_r_vs_t.h))
+  r_r_vs_t = [];
+else
+  r_r_vs_t = stats_r_vs_t.clustloc{2};
+end
+%% PLOT POWER
 % ----------------------------------
-% PLOT HERE
+% PLOT SEPARATELY FOR REST AND TASK, ALL PHARMA CONDITIONS
 % ----------------------------------
 cmap = cbrewer('qual', 'Set1', 10,'pchip');
 cmap = [0.7 0.7 0.7; cmap(1,:); cmap(2,:)]
@@ -333,8 +341,36 @@ xlabel('Frequency [Hz]','fontsize',13,'fontweight','bold');
 
 print(gcf,'-depsc2',sprintf('~/pconn_all/plots/all_sens_%sspec_v%d.pdf',str,1))
 
-%% 
+%% PLOT POWER
+% ----------------------------------
+% PLOT ONLY PLACEBO AND TASK/REST IN ONE PLOT
+% ----------------------------------
+maxf = 216;
+cmap = cbrewer('qual', 'Set1', 10,'pchip');
+cmap = [0.7 0.7 0.7; cmap(6,:); cmap(10,:)]
 
+figure; set(gcf,'color','w'); hold on
+
+subplot(1,2,1); hold on
+
+shadedErrorBar(log2(f(1:maxf)),res(1:maxf,1),res_err(1:maxf,1),{'color',[0.6 0.6 0.6],'linewidth',2}); alpha(1)
+shadedErrorBar(log2(f(1:maxf)),cnt(1:maxf,1),cnt_err(1:maxf,1),{'color',[0.1 0.1 0.1],'linewidth',2}); alpha(0.6)
+
+plot(log2(f(1:maxf)),log2(res(1:maxf,1)),'linewidth',2,'color',[0.6 0.6 0.6]);
+plot(log2(f(1:maxf)),log2(cnt(1:maxf,1)),'linewidth',2,'color',[0.1 0.1 0.1]);
+
+set(gca,'xtick',[1 2 3 4 5 6],'xticklabel',[2 4 8 16 32 64 ],'tickdir','out')
+
+line([log2(f(r_r_vs_t(1))) log2(f(r_r_vs_t(end)))],[-0.3e-28 -0.3e-28],'linewidth',3,'color',[0.6 0.6 0.6]);
+
+axis([ 0.5 6 -1e-28 5e-28]); axis square
+
+xlabel('Frequency [Hz]'); ylabel('Power');
+
+print(gcf,'-depsc2',sprintf('~/pconn_all/plots/all_sens_powerspec_resttask_v%d.pdf',1))
+
+
+%%
 col = {[0.7 0.7 0.7];[1 0.4 0];[0 0.5 1]}
 
 [t1,p1]=ttest(squeeze(r_pow(:,:,1)),squeeze(r_pow(:,:,2)),'dim',2);
