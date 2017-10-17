@@ -214,13 +214,13 @@ end
 
 %% PLOT AVERAGES
 
-
 ifoi = 2;
-
-load(sprintf('~/pconn_all/proc/all_sens_res_%s_clusterstat_contr%d_f%d_v%d.mat','dfa',1,ifoi,2));
 
 avg_res = squeeze(all_par_res(:,:,:,ifoi));
 avg_cnt = squeeze(all_par_cnt(:,:,:,ifoi));
+
+pars.scale = [-0.1 0.1];
+tmp = ttest(avg_res(:,2)-avg_res(:,1),'d');
       
 pars = [];
 pars.cbar = 0;
@@ -228,9 +228,7 @@ pars.markersize = 0;
 pars.linewidth = 3;
 pars.resolution = 300;
 pars.cmap = inferno;
-pars.scale = [-3 3];
-
-showfield_colormap(stats.stat,sa.locs_2D,pars);
+showfield_colormap(par,sa.locs_2D,pars);
 
 
 

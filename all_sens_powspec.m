@@ -200,7 +200,9 @@ if strcmp(str,'pow')
   res     = squeeze(nanmean(r_pow,2));
   cnt     = squeeze(nanmean(t_pow,2));
   res_err = std(r_pow,[],2)/sqrt(size(r_pow,2));
+  res_err_log = std(log10(r_pow),[],2)/sqrt(size(log10(r_pow),2));
   cnt_err = std(t_pow,[],2)/sqrt(size(t_pow,2));
+  cnt_err_log = std(log10(r_pow),[],2)/sqrt(size(log10(r_pow),2));
   par_res = r_pow;
   par_cnt = t_pow;
 elseif strcmp(str,'cvar')
@@ -223,16 +225,20 @@ cnt(find(f>146.5,1,'first'):find(f<153.5,1,'last'),:)=nan;
 res  = fixgaps(res,'pchip');
 cnt  = fixgaps(cnt,'pchip');
 
-maxf = find(f==100,1,'first');
+maxf = find(f==40,1,'first');
 
-res     = res(1:maxf,:);
-res_err = res_err(1:maxf,:);
-cnt     = cnt(1:maxf,:);
-cnt_err = cnt_err(1:maxf,:);
+res         = res(1:maxf,:);
+res_err     = res_err(1:maxf,:);
+res_err_log = res_err_log(1:maxf,:);
+
+cnt         = cnt(1:maxf,:);
+cnt_err     = cnt_err(1:maxf,:);
+cnt_err_log = cnt_err_log(1:maxf,:);
 
 para = [];
 para.paired = 1;
-% para.clusterthresh 
+para.alpha  = 0.025 
+para.clusteralpha  = 0.025 
 
 stats_r1 = tp_clustperm_1D(squeeze(par_res(1:maxf,:,1)),squeeze(par_res(1:maxf,:,2)),para);
 if isempty(find(stats_r1.h))
@@ -285,16 +291,16 @@ shadedErrorBar(log2(f(1:maxf)),res(:,1),res_err(:,1),{'color',cmap(1,:),'linewid
 shadedErrorBar(log2(f(1:maxf)),res(:,2),res_err(:,2),{'color',cmap(2,:),'linewidth',2}); alpha(0.4)
 shadedErrorBar(log2(f(1:maxf)),res(:,3),res_err(:,3),{'color',cmap(3,:),'linewidth',2}); alpha(0.4)
 
-plot(log2(f(1:maxf)),res(:,1),'linewidth',2,'color',cmap(1,:));
-plot(log2(f(1:maxf)),res(:,2),'linewidth',2,'color',cmap(2,:));
-plot(log2(f(1:maxf)),res(:,3),'linewidth',2,'color',cmap(3,:));
+plot(log2(f(1:maxf)),log10(res(:,1)),'linewidth',2,'color',cmap(1,:));
+plot(log2(f(1:maxf)),log10(res(:,2)),'linewidth',2,'color',cmap(2,:));
+plot(log2(f(1:maxf)),log10(res(:,3)),'linewidth',2,'color',cmap(3,:));
 
-set(gca,'xtick',[1 3 5 7],'xticklabel',[2 8  32  128],'tickdir','out')
-set(gca,'linewidth',2,'ticklength',[0.03 0.03]);
+set(gca,'xtick',[1 2 3 4 5 6],'xticklabel',[2 4 8 16 32 64],'tickdir','out')
+% set(gca,'linewidth',2,'ticklength',[0.03 0.03]);
 if strcmp(str,'pow')
-axis([ 0.5 7 0 5e-28])
+axis([ 0.5 6.5 0 5e-28])
 elseif strcmp(str,'cvar')
-axis([ 0.5 7 0 3e-28])
+axis([ 0.5 6.5 0 3e-28])
 end
 
 % legend('R-PBO','R-ATX','R-DPZ'); 
@@ -306,12 +312,11 @@ if ~isempty(r_m2); line([log2(f(r_m2(1))) log2(f(r_m2(end)))],[5e-28 5e-28],'lin
 % plot(log2(f(r_m1)),repmat(-90,length(r_m1),1),'.r','linewidth',3)
 % plot(log2(f(r_m2)),repmat(-90.5,length(r_m2),1),'.b','linewidth',3)
 
-set(gca,'fontsize',12,'fontweight','bold');
-xlabel('Frequency [Hz]','fontsize',13,'fontweight','bold'); 
+xlabel('Frequency [Hz]'); 
 if strcmp('str','pow')
-  ylabel('Power','fontsize',13,'fontweight','bold');
+  ylabel('Power','fontsize');
 elseif strcmp(str,'cvar')
-  ylabel('Coef. of variation','fontsize',13,'fontweight','bold');
+  ylabel('Coef. of variation');
 end
 % axis([0.5 7 -98 -90])
 
@@ -329,15 +334,16 @@ plot(log2(f(1:maxf)),cnt(:,3),'linewidth',2,'color',cmap(3,:));
 if ~isempty(t_m1); line([f(t_m1(1)) f(t_m1(end))],[-90 -90],'linewidth',3,'color','k'); end
 if ~isempty(t_m2); line([log2(f(t_m2(1))) log2(f(t_m2(end)))],[-90 -90],'linewidth',3,'color','k'); end
 
-set(gca,'xtick',[1 3 5 7],'xticklabel',[2 8  32  128],'tickdir','out')
-set(gca,'linewidth',2,'ticklength',[0.03 0.03]);
+set(gca,'xtick',[1 2 3 4 5 6],'xticklabel',[2 4 8 16 32 64],'tickdir','out')
+% set(gca,'linewidth',2,'ticklength',[0.03 0.03]);
 if strcmp(str,'pow')
-axis([ 0.5 7 0 5e-28])
+axis([0.5 6.5 0 5e-28])
 elseif strcmp(str,'cvar')
 axis([ 0.5 7 0 3e-28])
 end
-set(gca,'fontsize',12,'fontweight','bold'); axis square
-xlabel('Frequency [Hz]','fontsize',13,'fontweight','bold'); 
+% set(gca,'fontsize',12,'fontweight','bold'); 
+axis square
+xlabel('Frequency [Hz]'); 
 
 print(gcf,'-depsc2',sprintf('~/pconn_all/plots/all_sens_%sspec_v%d.pdf',str,1))
 

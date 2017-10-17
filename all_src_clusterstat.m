@@ -51,7 +51,7 @@ for v = [2]
   
 allstr       = {'dfa';'cvar';'pow'};
   
-  for istr = [3]
+  for istr = [1]
     
 %     if ~exist(sprintf([outdir 'all_src_clusterstat_str%d_v%d_processing.txt'],istr,v_out))
 %       system(['touch ' outdir sprintf('all_src_clusterstat_str%d_v%d_processing.txt',istr,v_out)]);

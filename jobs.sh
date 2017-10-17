@@ -22,7 +22,7 @@ chmod g=wx $PBS_JOBNAME
 
 sleep "$var"
 
-matlab -nodisplay -nodesktop -r "all_behav_src_stats; exit"  1> ~/jobs/$PBS_JOBID.out 2> ~/jobs/$PBS_JOBID.err
+matlab -nodisplay -nodesktop -r "all_src_clusterstat; exit"  1> ~/jobs/$PBS_JOBID.out 2> ~/jobs/$PBS_JOBID.err
 
 
 

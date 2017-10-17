@@ -18,7 +18,7 @@ for v = [2]
     v_cnt             = 1;
     v_res             = 1;
     v_out             = 1;
-    SUBJLIST          = [4 5 6 7 8 9 10 11 12 13 15 16 17 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
+    SUBJLIST          = [4 5 6 7 8 9 10 11 12 13 15 16 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
     CFG.clusteralpha  = 0.025;
     CFG.alpha         = 0.025;
   elseif v == 2
@@ -28,7 +28,7 @@ for v = [2]
     v_cnt             = 2;
     v_res             = 2;
     v_out             = 2;
-    SUBJLIST          = [4 5 6 7 8 9 10 11 12 13 15 16 17 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
+    SUBJLIST          = [4 5 6 7 8 9 10 11 12 13 15 16 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
     CFG.clusteralpha  = 0.025;
     CFG.alpha         = 0.025;
   elseif v == 3
@@ -38,7 +38,7 @@ for v = [2]
     v_cnt             = 3;
     v_res             = 3;
     v_out             = 3;
-    SUBJLIST          = [4 5 6 7 8 9 10 11 12 13 15 16 17 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
+    SUBJLIST          = [4 5 6 7 8 9 10 11 12 13 15 16  19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
     CFG.clusteralpha  = 0.025;
     CFG.alpha         = 0.025;
   elseif v == 5
@@ -48,7 +48,7 @@ for v = [2]
     v_cnt             = 5;
     v_res             = 5;
     v_out             = 5;
-    SUBJLIST          = [4 5 6 7 8 9 10 11 12 13 15 16 17 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
+    SUBJLIST          = [4 5 6 7 8 9 10 11 12 13 15 16  19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
     CFG.clusteralpha  = 0.025;
     CFG.alpha         = 0.025;
   elseif v == 6
@@ -58,7 +58,7 @@ for v = [2]
     v_cnt             = 6;
     v_res             = 6;
     v_out             = 6;
-    SUBJLIST          = [4 5 6 7 8 9 10 11 12 13 15 16 17 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
+    SUBJLIST          = [4 5 6 7 8 9 10 11 12 13 15 16  19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
     CFG.clusteralpha  = 0.025;
     CFG.alpha         = 0.025;
   elseif v == 7
@@ -67,8 +67,8 @@ for v = [2]
     % --------------------------------------------------------
     v_cnt             = 7;
     v_res             = 7;
-    v_out             = 7;
-    SUBJLIST          = [4 5 6 7 8 9 10 11 12 13 15 16 17 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
+    v_out             = 7
+    SUBJLIST          = [4 5 6 7 8 9 10 11 12 13 15 16  19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
     CFG.clusteralpha  = 0.025;
     CFG.alpha         = 0.025;
     % --------------------------------------------------------
@@ -96,8 +96,8 @@ for v = [2]
     % --------------------------------------------------------
   end
   
-  % addpath ~/Documents/MATLAB/fieldtrip-2016/fieldtrip-20160919/
-  addpath /home/tpfeffer/Documents/MATLAB/fieldtrip-20130925/
+%   addpath ~/Documents/MATLAB/fieldtrip-2016/fieldtrip-20160919/
+  addpath /home/tpfeffer/Documents/MATLAB/fieldtrip-20160919/
   addpath /home/gnolte/meg_toolbox/toolbox/
   addpath /home/gnolte/meg_toolbox/fieldtrip_utilities/
   addpath /home/gnolte/meg_toolbox/toolbox_nightly/
@@ -117,26 +117,26 @@ for v = [2]
     
     str = allstr{istr};
     
-    if ~exist(sprintf([outdir 'all_sens_clusterstat_s%d_v%d_processing.txt'],istr,v_out))
-      system(['touch ' outdir sprintf('all_sens_clusterstat_s%d_v%d_processing.txt',istr,v_out)]);
-    else
-      continue
-    end
+%     if ~exist(sprintf([outdir 'all_sens_clusterstat_s%d_v%d_processing.txt'],istr,v_out))
+%       system(['touch ' outdir sprintf('all_sens_clusterstat_s%d_v%d_processing.txt',istr,v_out)]);
+%     else
+%       continue
+%     end
     
     ord	= pconn_randomization;
     load ~/pconn/proc/pconn_label274.mat
     
 %     load /home/tpfeffer/pconn/proc/src/pconn_sa_s4_m1_b1_v1.mat
     
-    for ifoi = 1 : 4
+    for ifoi = 1 : 5
       for isubj = SUBJLIST
         for m = 1 : 3
           
           im = find(ord(isubj,:)==m);
           
-          tmp_cnt = pcbi_cnt(isubj);
+%           tmp_cnt = pcbi_cnt(isubj);
           
-          cnt(isubj,m) = nanmean(tmp_cnt((im*2-1):im*2));
+%           cnt(isubj,m) = nanmean(tmp_cnt((im*2-1):im*2));
           
           load(sprintf(['~/pconn_cnt/proc/dfa/' 'pconn_cnt_sens_dfa_s%d_m%d_f%d_v%d.mat'],isubj,im,ifoi,v_cnt));
           
@@ -199,7 +199,7 @@ for v = [2]
     
     contrast = [2 1; 3 1; 2 3];
     
-    for ifoi = 1 : 4
+    for ifoi = 2
       
       for icontr = 1 : 3
         
@@ -252,7 +252,7 @@ for v = [2]
     
     % COMPARE PHARMA DURING REST
     
-    for ifoi = 1 : 4
+    for ifoi = 2
       
       for icontr = 1 : 3
         
@@ -305,7 +305,7 @@ for v = [2]
     
     % COMPARE TASK VS REST
     
-    for ifoi = 1 : 4
+    for ifoi = 2 : 2
       
       dat     = [nanmean(par_cnt(:,:,:,ifoi),3) nanmean(par_res(:,:,:,ifoi),3)];
       
@@ -353,11 +353,62 @@ for v = [2]
       
     end
     
+    %% AVERAGE ACROSS BOTH CONDITIONS
+    
+     
+    for ifoi = 2
+      
+      dat     = [(par_cnt(:,:,contrast(icontr,1),ifoi)+par_res(:,:,contrast(icontr,1),ifoi))./2 (par_cnt(:,:,contrast(icontr,2),ifoi)+par_res(:,:,contrast(icontr,2),ifoi))./2];
+      
+      data_low.dimord                  = 'subj_chan_freq_time';
+      data_low.time                   = [1 2];
+      data_low.freq                   = [1 2];
+      data_low.powspctrm(:,:,1:2,1:2) = repmat(permute(dat,[2 1]),[1 1 2 2]);
+      
+      cfg                  = [];
+      cfg.channel          = 'all';
+      cfg.latency          = [1 1];
+      cfg.frequency        = [1 1];
+      cfg.method           = 'montecarlo';
+      cfg.statistic        = 'depsamplesT';
+      cfg.computeprob      = 'yes';
+      cfg.correctm         = 'cluster';
+      cfg.clusteralpha     = CFG.clusteralpha;
+      cfg.clusterstatistic = 'maxsum';
+      cfg.clustertail      = 0; %1 = right
+      cfg.tail             = 0; %1 = right
+      cfg.alpha            = CFG.alpha;
+      cfg.minnbchan        = 2;
+      cfg.numrandomization = 10000;
+      cfg.avgovertime      = 'yes';
+      cfg.avgoverfreq      = 'yes';
+      
+      %   specifies with which sensors other sensors can form clusters
+      cfg_neighb.method           = 'template';
+      cfg_neighb.template         = 'CTF275_neighb.mat';
+      cfg_neighb.feedback         = 'no';
+      cfg.neighbours = n;
+      
+      n_subj = length(SUBJLIST);
+      design = zeros(2,2*n_subj);
+      design(1,:) = repmat(1:n_subj,1,2);
+      design(2,:) = mod(floor([0:(2*n_subj-1)]/(n_subj/1)),2)+1;
+      
+      cfg.design   = design;
+      cfg.uvar     = 1;
+      cfg.ivar     = 2;
+      
+      [stats] = ft_freqstatistics(cfg, data_low);
+      
+      save(sprintf('~/pconn_all/proc/all_sens_%s_clusterstat_avg_contr%d_f%d_v%d.mat',str,icontr,ifoi,v_out),'stats','SUBJLIST');
+      
+    end
+    
     %% COMPARE ATOMOX(TASK-REST) VS. PLACEBO(TASK-REST)
     
     contrasts = [2 1; 3 1; 2 3];
     
-    for ifoi = 1 : 4
+    for ifoi = 2
       
       for icontr = 1 : 3
         
