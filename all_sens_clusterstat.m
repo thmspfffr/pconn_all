@@ -198,7 +198,8 @@ for v = [2]
     n       = ft_prepare_neighbours(cfg);
     
     contrast = [2 1; 3 1; 2 3];
-    
+    skip =0;
+    if skip
     for ifoi = 2
       
       for icontr = 1 : 3
@@ -249,9 +250,10 @@ for v = [2]
         
       end
     end
-    
+  end
+    skip = 0;
     % COMPARE PHARMA DURING REST
-    
+    if skip
     for ifoi = 2
       
       for icontr = 1 : 3
@@ -302,7 +304,9 @@ for v = [2]
         
       end
     end
-    
+  end
+    skip = 0;
+    if skip 
     % COMPARE TASK VS REST
     
     for ifoi = 2 : 2
@@ -352,10 +356,11 @@ for v = [2]
       save(sprintf('~/pconn_all/proc/all_sens_%s_clusterstat_cnt-rest_f%d_v%d.mat',str,ifoi,v_out),'stats','SUBJLIST');
       
     end
-    
+  end
     %% AVERAGE ACROSS BOTH CONDITIONS
     
-     
+    icontr = 1;
+    
     for ifoi = 2
       
       dat     = [(par_cnt(:,:,contrast(icontr,1),ifoi)+par_res(:,:,contrast(icontr,1),ifoi))./2 (par_cnt(:,:,contrast(icontr,2),ifoi)+par_res(:,:,contrast(icontr,2),ifoi))./2];

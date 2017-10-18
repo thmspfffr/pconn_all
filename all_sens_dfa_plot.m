@@ -233,6 +233,29 @@ pars.scale = [-3 3];
 showfield_colormap(stats.stat,sa.locs_2D,pars);
 
 
+%% PLOIT SENSOR LEVEL AVERAGE (SEE FIGURE FOR REVISION)
+
+
+
+ifoi = 2;
+addpath ~/Documents/MATLAB/cbrewer/cbrewer/
+load /home/tpfeffer/pconn_all/proc/all_sens_dfa_clusterstat_avg_contr1_f2_v2.mat
+cmap1  = cbrewer('seq', 'YlOrRd', 150,'pchip'); cmap1 = cmap1(50:1:end,:);
+cmap2  = cbrewer('seq', 'YlGnBu', 150,'pchip'); cmap2 = cmap2(end:-1:50,:);
+cmap  = [cmap2; ones(50,3); cmap1];
+pars = [];
+pars.cbar = 0;
+pars.markersize = 0;
+pars.linewidth = 5;
+pars.resolution = 300;
+pars.cmap = cmap;
+pars.scale = [-4 4];
+pars.stats = stats;
+
+showfield_colormap(stats.stat.*stats.mask,sa.locs_2D,pars);
+
+print(gcf,'-djpeg100',sprintf('~/pconn_all/plots/all_sens_dfa_plot_avg_mask0_contr1_f2_v2.jpg'))
+
 
 
 

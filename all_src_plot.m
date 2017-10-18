@@ -1,7 +1,7 @@
 %% COMPUTE WHOLE BRAIN DFA IN SOURCE SPACE
 % all_src_plot
 
-clear 
+clear
 
 % v = 1: cortex, eloreta, v = 2: cortex, lcmv, v = 3: coarse, eloreta
 % str1 = dfa, str2 = amp, str3 = cvar, str4 = var
@@ -16,7 +16,7 @@ cmap2  = cbrewer('seq', 'YlGnBu', 150,'pchip'); cmap2 = cmap2(end:-1:50,:);
 cmap  = [cmap2; ones(50,3); cmap1];
 
 for v = [2]
-%   v= 2;
+  %   v= 2;
   % --------------------------------------------------------
   % VERSION 1
   % --------------------------------------------------------
@@ -26,7 +26,7 @@ for v = [2]
   SUBJLIST  = [4 5 6 7 8 9 10 11 12 13 15 16 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34];
   % --------------------------------------------------------
   addpath ~/Documents/MATLAB/cbrewer/cbrewer/
-
+  
   allstr    = {'dfa';'cvar';'pow'};
   gridsize  = 'cortex';
   contrasts = [2 1; 3 1; 2 3];
@@ -40,19 +40,19 @@ for v = [2]
   addpath ~/pconn/matlab/
   addpath ~/Documents/MATLAB/Colormaps/Colormaps' (5)'/Colormaps/
   
-    for istr = STR
-      for ifoi = foi
-
-%       if ~exist(sprintf([outdir 'all_src_plot_s%d_f%d_v%d_processing.txt'],istr,ifoi,v))
-%         system(['touch ' outdir sprintf('all_src_plot_s%d_f%d_v%d_processing.txt',istr,ifoi,v)]);
-%       else
-%         continue
-%       end
+  for istr = STR
+    for ifoi = foi
+      
+      %       if ~exist(sprintf([outdir 'all_src_plot_s%d_f%d_v%d_processing.txt'],istr,ifoi,v))
+      %         system(['touch ' outdir sprintf('all_src_plot_s%d_f%d_v%d_processing.txt',istr,ifoi,v)]);
+      %       else
+      %         continue
+      %       end
       
       fprintf('Processing v%d s%d ...\n',v,istr);
       
       str = allstr{istr};
-       
+      
       % READ TEMPLATE MRI STUFF
       % ----------------
       load sa_meg_template;
@@ -76,15 +76,15 @@ for v = [2]
       %% READ IN DATA
       fprintf('Reading data ...\n');
       ord   = pconn_randomization;
-
+      
       for isubj = SUBJLIST
-%         fprintf('Reading data s%d ...\n',isubj);
+        %         fprintf('Reading data s%d ...\n',isubj);
         for m = 1 : 3
-
+          
           im = find(ord(isubj,:)==m);
-
+          
           if ~strcmp(str,'pow')
-          load(sprintf(['~/pconn_cnt/proc/dfa/pconn_cnt_src_dfa_s%d_m%d_f%d_v%d.mat'],isubj,im,ifoi,v));
+            load(sprintf(['~/pconn_cnt/proc/dfa/pconn_cnt_src_dfa_s%d_m%d_f%d_v%d.mat'],isubj,im,ifoi,v));
           end
           if strcmp(str,'dfa')
             par_all_cnt(:,m,isubj)  = nanmean(par.dfa,2);
@@ -96,11 +96,11 @@ for v = [2]
             par_all_cnt(:,m,isubj)  = nanmean(par.amp,2); clear par
           elseif strcmp(str,'pow')
             load(sprintf(['~/pconn_cnt/proc/src/pconn_cnt_src_pow_s%d_m%d_f%d_v%d.mat'],isubj,im,ifoi,v_pow));
-            par_all_cnt(:,m,isubj)  = nanmean(par.pow,2); 
+            par_all_cnt(:,m,isubj)  = nanmean(par.pow,2);
           end
           %
           if ~strcmp(str,'pow')
-          load(sprintf(['~/pconn/proc/dfa/pconn_src_dfa_s%d_m%d_f%d_v%d.mat'],isubj,im,ifoi,v));
+            load(sprintf(['~/pconn/proc/dfa/pconn_src_dfa_s%d_m%d_f%d_v%d.mat'],isubj,im,ifoi,v));
           end
           if strcmp(str,'dfa')
             par_all_res(:,m,isubj)  = nanmean(par.dfa,2);
@@ -112,26 +112,26 @@ for v = [2]
             par_all_res(:,m,isubj)  = nanmean(par.amp,2);
           elseif strcmp(str,'pow')
             load(sprintf(['~/pconn/proc/src/pconn_src_pow_s%d_m%d_f%d_v%d.mat'],isubj,im,ifoi,v_pow));
-            par_all_res(:,m,isubj)  = nanmean(par.pow,2); 
+            par_all_res(:,m,isubj)  = nanmean(par.pow,2);
           end
-
+          
           clear par
-
+          
         end
       end
-
+      
       par_all_res  = par_all_res(:,:,SUBJLIST);
       par_all_cnt  = par_all_cnt(:,:,SUBJLIST);
-
+      
       fprintf('Reading data ... Done!\n');
-
+      
       %% PHARMA COMPARISON
       bayes = 0;
-  
+      
       for mask = 0:1
         
         fprintf('Pharma comparison mask%d ...\n',mask);
-
+        
         clear stats
         
         for icontr = 3:3
@@ -151,7 +151,7 @@ for v = [2]
               d(i) = t2smpbf(d(i),size(par_all_cnt,3),0.707);
             end
           end
-            
+          
           %       d(abs(d) < 2.5])=eps;
           
           if ~strcmp(str,'pow')
@@ -178,7 +178,7 @@ for v = [2]
           par_interp = spatfiltergauss(d,g1,dd,g2);
           
           para = [];
-          if bayes 
+          if bayes
             para.colorlimits = [0 2];
           else
             para.colorlimits = [-3 3];
@@ -233,7 +233,7 @@ for v = [2]
           
           para = [] ;
           % WHAT's WRONG HERE?
-%           para.colorlimits = [-1.96 1.96];
+          %           para.colorlimits = [-1.96 1.96];
           if bayes
             para.colorlimits = [0 2];
           else
@@ -241,14 +241,14 @@ for v = [2]
           end
           % PLOT RESULTS
           tp_showsource(par_interp,cmap,sa_meg_template,para);
-
+          
           print(gcf,'-djpeg100',sprintf('~/pconn_all/plots/all_src_rst_%s_mask%d_c%d_f%d_v%d.jpg',str,mask,icontr,ifoi,v_stat))
           clear stats
         end
         
       end
-      end
     end
+  end
 end
 
 error('!')
@@ -299,7 +299,12 @@ end
 par_all_res  = par_all_res(:,:,SUBJLIST);
 par_all_cnt  = par_all_cnt(:,:,SUBJLIST);
 
-%%      
-      
-      
-      
+error('!')
+
+%%  SHOW BLOCKS SEPARATELY
+
+
+%% READ IN DATA
+
+
+
