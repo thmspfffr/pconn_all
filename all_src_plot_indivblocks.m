@@ -222,14 +222,16 @@ for mask = 0:1
     end
   end
 end
-% COMPUTE CORRELATIONS
+
+%% COMPUTE CORRELATIONS ACROSS SUBJECTS
 clear d
 
-for icontr = 1 : 3
+icontr = 1;
+
   for isubj = 1 : 28
     
-    d1 = nanmean(par_all_res(:,contrasts(icontr,1),isubj,1)-par_all_res(:,contrasts(icontr,2),isubj,1),3);
-    d2 = nanmean(par_all_res(:,contrasts(icontr,1),isubj,2)-par_all_res(:,contrasts(icontr,2),isubj,2),3);
+    d1 = nanmean(a(:,contrasts(icontr,1),isubj,1)-a(:,contrasts(icontr,2),isubj,1),3);
+    d2 = nanmean(a(:,contrasts(icontr,1),isubj,2)-a(:,contrasts(icontr,2),isubj,2),3);
     
     [r(isubj)]=corr(d1,d2);
     
@@ -237,7 +239,6 @@ for icontr = 1 : 3
     %     d(isubj,2) = mean(d2);
     
     %     fprintf('Correlation c%d: r = %.2f | p = %.3f\n',icontr,r,p)
-  end
   %   figure;
   %   scatter(d(:,1),d(:,2),40,'markerfacecolor','k','markeredgecolor','w')
   %   axis square
@@ -246,5 +247,19 @@ for icontr = 1 : 3
   %   xlabel('\Delta(DFA) (Block1)')
   %   ylabel('\Delta(DFA) (Block2)')
   %   title(sprintf('Contrast %d',icontr))
-end
+  end
+  
+  
+  
+
+  %% second one: averaged maps correlations
+  
+  par_all_cnt(:,2,27,1) = par_all_cnt(:,2,27,2);
+
+  a = (par_all_res+par_all_cnt)./2;
+
+  
+  d1 = nanmean(par_all_res(:,contrasts(icontr,1),:,1),3)-nanmean(par_all_res(:,contrasts(icontr,2),:,1),3);
+  d2 = nanmean(par_all_res(:,contrasts(icontr,1),:,2),3)-nanmean(par_all_res(:,contrasts(icontr,2),:,2),3);
+
 

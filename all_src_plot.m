@@ -7,8 +7,8 @@ clear
 % str1 = dfa, str2 = amp, str3 = cvar, str4 = var
 % freq in v = 2: [1 = 2 -12; 2 = 8 -12; 3 = 12 - 46; 4 = 54 - 100; 5 = 2 - 8]
 
-foi = [2];
-STR = [1];
+foi = [6];
+STR = [3];
 
 addpath ~/Documents/MATLAB/cbrewer/cbrewer/
 cmap1  = cbrewer('seq', 'YlOrRd', 150,'pchip'); cmap1 = cmap1(50:1:end,:);
@@ -134,7 +134,7 @@ for v = [2]
         
         clear stats
         
-        for icontr = 3:3
+        for icontr = 1:3
           
           % -------------------------------------------------------
           %   TASK
@@ -157,6 +157,9 @@ for v = [2]
           if ~strcmp(str,'pow')
             if mask && exist(sprintf('~/pconn_all/proc/all_src_clusterstat_tsk_%s_c%d_f%d_v%d.mat',str,icontr,ifoi,v_stat))
               load(sprintf('~/pconn_all/proc/all_src_clusterstat_tsk_%s_c%d_f%d_v%d.mat',str,icontr,ifoi,v_stat))
+              if isempty(stats.stat_pos) && isempty(stats.stat_neg)
+                stats.mask = logical(zeros(size(stats.stat,1),1));
+              end
               stats.mask = logical(stats.mask);
               if any(stats.mask)
                 d(~stats.mask)=eps;
@@ -167,6 +170,9 @@ for v = [2]
           else
             if mask && exist(sprintf('~/pconn_all/proc/all_src_clusterstat_power_tsk_c%d_f%d_v%d.mat',icontr,ifoi,v_pow))
               load(sprintf('~/pconn_all/proc/all_src_clusterstat_power_tsk_c%d_f%d_v%d.mat',icontr,ifoi,v_pow))
+              if isempty(stats.stat_pos) && isempty(stats.stat_neg)
+                stats.mask = logical(zeros(size(stats.stat,1),1));
+              end
               stats.mask = logical(stats.mask);
               if any(stats.mask)
                 d(~stats.mask)=eps;
@@ -185,10 +191,9 @@ for v = [2]
           end
           
           % PLOT RESULTS
+          para.filename = sprintf('~/pconn_all/plots/all_src_tsk_%s_mask%d_c%d_f%d_v%d.png',str,mask,icontr,ifoi,v_stat);
           tp_showsource(par_interp,cmap,sa_meg_template,para);
-          
-          print(gcf,'-djpeg100',sprintf('~/pconn_all/plots/all_src_tsk_%s_mask%d_c%d_f%d_v%d.jpg',str,mask,icontr,ifoi,v_stat))
-          
+                    
           clear para r d stats
           
           % -------------------------------------------------------
@@ -210,6 +215,9 @@ for v = [2]
           if ~strcmp(str,'pow')
             if mask && exist(sprintf('~/pconn_all/proc/all_src_clusterstat_rst_%s_c%d_f%d_v%d.mat',str,icontr,ifoi,v_stat))
               load(sprintf('~/pconn_all/proc/all_src_clusterstat_rst_%s_c%d_f%d_v%d.mat',str,icontr,ifoi,v_stat))
+              if isempty(stats.stat_pos) && isempty(stats.stat_neg)
+                stats.mask = logical(zeros(size(stats.stat,1),1));
+              end
               stats.mask = logical(stats.mask);
               if any(stats.mask)
                 d(~stats.mask)=eps;
@@ -220,6 +228,9 @@ for v = [2]
           else
             if mask && exist(sprintf('~/pconn_all/proc/all_src_clusterstat_power_rst_c%d_f%d_v%d.mat',icontr,ifoi,v_pow))
               load(sprintf('~/pconn_all/proc/all_src_clusterstat_power_rst_c%d_f%d_v%d.mat',icontr,ifoi,v_pow))
+              if isempty(stats.stat_pos) && isempty(stats.stat_neg)
+                stats.mask = logical(zeros(size(stats.stat,1),1));
+              end
               stats.mask = logical(stats.mask);
               if any(stats.mask)
                 d(~stats.mask)=eps;
@@ -240,9 +251,9 @@ for v = [2]
             para.colorlimits = [-3 3];
           end
           % PLOT RESULTS
+          para.filename = sprintf('~/pconn_all/plots/all_src_rst_%s_mask%d_c%d_f%d_v%d.jpg',str,mask,icontr,ifoi,v_stat);
           tp_showsource(par_interp,cmap,sa_meg_template,para);
           
-          print(gcf,'-djpeg100',sprintf('~/pconn_all/plots/all_src_rst_%s_mask%d_c%d_f%d_v%d.jpg',str,mask,icontr,ifoi,v_stat))
           clear stats
         end
         

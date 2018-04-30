@@ -7,7 +7,7 @@ clear
 
 rng('shuffle','twister')
 
-maxfoi = 5;
+maxfoi = 6;
 % v = 1: cortex, eloreta, v = 2: cortex, lcmv, v = 3: coarse, eloreta
 
 % --------------------------------------------------------
@@ -90,7 +90,7 @@ pow_all_res  = pow_all_res(:,:,SUBJLIST,:);
 pow_all_cnt  = pow_all_cnt(:,:,SUBJLIST,:);
 
 %%
-for ifoi = 1 : maxfoi
+for ifoi = 6 : maxfoi
       
   fprintf('Computing stats v%d for and freq%d  ...\n',v,ifoi);
   
